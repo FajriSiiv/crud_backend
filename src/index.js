@@ -10,7 +10,9 @@ app.use(logRequest);
 
 app.use(userRoutes);
 
-app.use("/", (req, res) => {});
+app.use("/", (req, res) => {
+  console.log("Masuk ke API");
+});
 
 app.listen(process.env.PORT, () => {
   console.log("Server berhasil di running di port", process.env.PORT);

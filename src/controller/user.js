@@ -1,13 +1,10 @@
 const userModel = require("../models/user");
 
 const getAllUsers = async (req, res) => {
-  // const [rows,fields] = await userModel.getAllUsers();
-
-  // 1:16:00
   try {
     const [data] = await userModel.getAllUsers();
 
-    res.json({
+    res.status(200).json({
       message: "Get user access",
       data: data,
     });
@@ -19,36 +16,70 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-const createNewUser = (req, res) => {
-  console.log(req.body);
-  res.json({
-    message: "Create new success",
-    data: req.body,
-  });
+const createNewUser = async (req, res) => {
+  const bodyPayload = req.body;
+
+  if (!bodyPayload.email || !bodyPayload.nama || !bodyPayload.address) {
+    return res.status(400).json({
+      message: "Isi semua form",
+      data: null,
+    });
+  }
+
+  try {
+    await userModel.createNewUser(bodyPayload);
+    res.status(201).json({
+      message: "Create new success",
+      data: bodyPayload,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: "Create user failed",
+      serverMessage: err,
+    });
+  }
 };
 
-const updateUser = (req, res) => {
+const updateUser = async (req, res) => {
   const { idUser } = req.params;
-  console.log("idUser :", idUser);
+  const bodyPayload = req.body;
 
-  res.json({
-    message: "UPDATE user success",
-    data: req.body,
-  });
+  try {
+    await userModel.updateUser(bodyPayload, idUser);
+
+    res.json({
+      message: "UPDATE user success",
+      data: {
+        id: idUser,
+        ...bodyPayload,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: "update user failed",
+      serverMessage: err,
+    });
+  }
 };
 
-const deleteUser = (req, res) => {
+// 1:39:00
+
+const deleteUser = async (req, res) => {
   const { idUser } = req.params;
 
-  res.json({
-    message: "DELETE user success",
-    data: {
-      id: idUser,
-      name: "Muhammad Fajri",
-      email: "mhd@gmail.com",
-      address: "ajsdjbxcv",
-    },
-  });
+  try {
+    await userModel.deleteUser(idUser);
+
+    res.status(200).json({
+      message: "DELETE user success",
+      data: null,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: "DELETE user failed",
+      serverMessage: err,
+    });
+  }
 };
 
 module.exports = {

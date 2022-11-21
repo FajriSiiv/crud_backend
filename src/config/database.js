@@ -11,5 +11,5 @@ const dbPool = mysql.createPool({
   database: dbName,
 });
 
-// dbpool bersifat asycn
+// dbpool bersifat async jadi di tambah promise
 module.exports = dbPool.promise();
